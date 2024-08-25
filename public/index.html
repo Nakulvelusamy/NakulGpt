@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generative AI Chatbot</title>
+  <title>Nakul AI Chatbot</title>
   <!-- Include Boxicons CDN -->
   <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -95,14 +95,14 @@
       flex-direction: column;
     }
 
-    .user {
+    .you {
       align-self: flex-end;
       text-align: right;
       color: var(--hover-color);
       font-weight: bold;
     }
 
-    .bot {
+    .CSBS bot {
       align-self: flex-start;
       text-align: left;
       color: var(--text-color);
@@ -284,7 +284,7 @@
 </head>
 <body>
   <header>
-    <div class="logo">Chatbot<span>AI</span></div>
+    <div class="logo">CSBS<span>AI</span></div>
   </header>
 
   <div class="chat-container">
@@ -302,9 +302,9 @@
     </div>
   </div>
 
-  <div class="faculty-section">
-    <h1>Faculty Details</h1>
-    <div class="faculty-profile">
+  <!-- <div class="faculty-section">
+    <h1>Faculty Details</h1> -->
+    <!-- <div class="faculty-profile">
       <img src="img/sakthivel sir.jpg" alt="Dr. K. Sakthivel">
       <div>
         <h2>Dr. K. Sakthivel</h2>
@@ -315,16 +315,15 @@
         <p><strong>Email ID:</strong> <a href="mailto:sakthivelk@ksrct.ac.in">sakthivelk@ksrct.ac.in</a></p>
         <p><strong>Publications:</strong> IJ: 04, IC: 04, NC: 10</p>
       </div>
-    </div>
-  </div>
-
+    </div> -->
+  <!-- </div> -->
+   <img src="img/sakt" alt="" class="">
   <script>
     const chatBox = document.getElementById('chat-box');
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
     const loader = document.getElementById('loader');
-
-    // Function to add a message to the chat box
+  
     const addMessageToChatBox = (sender, text) => {
       const messageElement = document.createElement('div');
       messageElement.className = `message ${sender}`;
@@ -332,16 +331,14 @@
       chatBox.appendChild(messageElement);
       chatBox.scrollTop = chatBox.scrollHeight;
     };
-
-    // Function to handle code response
+  
     const addCodeToChatBox = (codeContent) => {
       const codeElement = document.createElement('div');
       codeElement.className = 'message bot';
       const codeBox = document.createElement('div');
       codeBox.className = 'code-box';
-      codeBox.textContent = codeContent; // Use textContent to avoid HTML injection
-
-      // Create and append copy button
+      codeBox.textContent = codeContent;
+  
       const copyBtn = document.createElement('button');
       copyBtn.textContent = 'Copy';
       copyBtn.onclick = () => {
@@ -351,79 +348,100 @@
           console.error('Failed to copy code: ', err);
         });
       };
-
+  
       codeBox.appendChild(copyBtn);
       codeElement.appendChild(codeBox);
       chatBox.appendChild(codeElement);
       chatBox.scrollTop = chatBox.scrollHeight;
     };
-
-    // Function to handle list response
+  
     const addListToChatBox = (listItems) => {
       const listElement = document.createElement('div');
       listElement.className = 'message bot';
       const listBox = document.createElement('div');
       listBox.className = 'list-box';
       const ulElement = document.createElement('ul');
-
+  
       listItems.forEach(item => {
         const liElement = document.createElement('li');
         liElement.textContent = item;
         ulElement.appendChild(liElement);
       });
-
+  
       listBox.appendChild(ulElement);
       listElement.appendChild(listBox);
       chatBox.appendChild(listElement);
       chatBox.scrollTop = chatBox.scrollHeight;
     };
-
-    // Function to show loader
+  
+    const addFacultyToChatBox = (facultyDetails) => {
+      const messageElement = document.createElement('div');
+      messageElement.className = 'message bot';
+  
+      facultyDetails.forEach(faculty => {
+        const facultyElement = document.createElement('div');
+        facultyElement.innerHTML = `
+          <div class="faculty-profile">
+            <img src="${faculty.image}" alt="${faculty.name}">
+            <div>
+              <h2>${faculty.name}</h2>
+              <p><strong>Designation:</strong> ${faculty.designation}</p>
+              <p><strong>Educational Qualification:</strong> ${faculty.qualification}</p>
+              <p><strong>Experience:</strong> ${faculty.experience}</p>
+              <p><strong>Area of Specialization:</strong> ${faculty.specialization}</p>
+              <p><strong>Email ID:</strong> <a href="mailto:${faculty.email}">${faculty.email}</a></p>
+              <p><strong>Publications:</strong> ${faculty.publications}</p>
+            </div>
+          </div>
+        `;
+        messageElement.appendChild(facultyElement);
+      });
+  
+      chatBox.appendChild(messageElement);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    };
+  
     const showLoader = () => {
       loader.style.display = 'flex';
     };
-
-    // Function to hide loader
+  
     const hideLoader = () => {
       loader.style.display = 'none';
     };
-
-    // Function to send message
+  
     const sendMessage = async () => {
       const message = userInput.value.trim();
       if (message === '') return;
-
-      // Display user message
-      addMessageToChatBox('user', message);
+  
+      addMessageToChatBox('you', message);
       userInput.value = '';
-
-      // Show loader
+  
       showLoader();
-
-      // Send message to server
+  
       const response = await fetch('http://localhost:3000/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message })
       });
-
+  
       const data = await response.json();
       const responseText = data.response;
-
-      // Hide loader
+  
       hideLoader();
-
-      // Determine if the response is code or list
+  
       if (responseText.startsWith('```') && responseText.endsWith('```')) {
         addCodeToChatBox(responseText.substring(3, responseText.length - 3).trim());
+      } else if (responseText.includes('faculty details')) {
+        const facultyDetails = JSON.parse(responseText);
+        addFacultyToChatBox(facultyDetails);
       } else if (responseText.includes('\n') && !responseText.includes('1.')) {
-        addMessageToChatBox('bot', responseText.replace(/\n/g, '<br>'));
+        addMessageToChatBox('CSBS bot', responseText.replace(/\n/g, '<br>'));
       } else {
         const listItems = responseText.split('\n').filter(item => item.trim());
         addListToChatBox(listItems);
       }
     };
-
+  
     sendBtn.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
@@ -432,5 +450,6 @@
       }
     });
   </script>
+  
 </body>
 </html>
